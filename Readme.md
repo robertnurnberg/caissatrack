@@ -1,7 +1,7 @@
 # Caissatrack
 
 Track the evaluations of the 100k most popular positions in 
-[Caissabase](www.caissabase.co.uk) on 
+[Caissabase](https://www.caissabase.co.uk) on 
 [chessdb.cn](https://chessdb.cn/queryc_en/) (cdb). The positions can be
 found in [`caissa_sorted_100000.epd`](caissa_sorted_100000.epd), where they
 appear in sorted order according to popularity. For example, the starting
