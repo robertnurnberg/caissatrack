@@ -7,3 +7,8 @@ found in [`caissa_sorted_100000.epd`](caissa_sorted_100000.epd), where they
 appear in sorted order according to popularity. For example, the starting
 positions appears first. Thanks to Joost VandeVondele for preparing
 the file `caissa_sorted_100000.epd` in July 2023.
+
+The file [`caissa_sorted_100000_cdbpv.epd`](caissa_sorted_100000_cdbpv.epd) is periodically created with the help of the script `cdbbulkpv.py` from [cdblib](https://github.com/robertnurnberg/cdblib), and the obtained statistics are written to [`caissatrack.csv`](caissatrack.csv).
+
+TODO: * plot oldest and newest eval and depth distributions in one plot
+      * plot (rolling average?) of some significant quantity over time
