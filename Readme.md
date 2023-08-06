@@ -10,5 +10,20 @@ the file `caissa_sorted_100000.epd` in July 2023.
 
 The file [`caissa_sorted_100000_cdbpv.epd`](caissa_sorted_100000_cdbpv.epd) is periodically created with the help of the script `cdbbulkpv.py` from [cdblib](https://github.com/robertnurnberg/cdblib), and the obtained statistics are written to [`caissatrack.csv`](caissatrack.csv).
 
-TODO: * plot oldest and newest eval and depth distributions in one plot
-      * plot (rolling average?) of some significant quantity over time
+---
+
+<p align="center"> <img src="caissatrack.png?raw=true"> </p>
+
+---
+
+<p align="center"> <img src="caissatrackpv.png?raw=true"> </p>
+
+---
+
+If you want to help improving the coverage of these positions on cdb,
+you could run the command 
+```
+python cdbbulksearch.py --bulkConcurrency 16 --forever --depthLimit 10 --shuffle caissa_sorted_100000.epd
+```
+from time to time after having cloned
+[cdbexplore](https://github.com/vondele/cdbexplore).
