@@ -41,7 +41,7 @@ def abssort_str(d):
     l = []
     for key, value in sorted(d.items(), key=lambda t: abs(t[0]) + 0.5 * (t[0] < 0)):
         l.append(f"{key}: {value}")
-    return "{" + ", ".join(l) + "}"
+    return "{" + "; ".join(l) + "}"
 
 
 print(f"{mtime},{abssort_str(evals)},{abssort_str(pvlengths)}")
