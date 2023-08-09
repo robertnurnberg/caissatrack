@@ -20,8 +20,8 @@ class matedata:
                     pos1 = line.find(",{")
                     pos2 = line.find("},{")
                     dateStr, _, _ = line.partition("T")
-                    dict1Str = line[pos1 + 1 : pos2 + 1]
-                    dict2Str = line[pos2 + 2 :]
+                    dict1Str = line[pos1 + 1 : pos2 + 1].replace(";", ",")
+                    dict2Str = line[pos2 + 2 :].replace(";", ",")
                     self.date.append(dateStr)
                     self.evals.append(ast.literal_eval(dict1Str))
                     self.depths.append(ast.literal_eval(dict2Str))
