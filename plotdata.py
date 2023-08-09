@@ -30,8 +30,12 @@ class matedata:
         dateOld, dateNew = str(self.date[0]), str(self.date[-1])
         if pv:
             dictOld, dictNew = self.depths[0], self.depths[-1]
+            rangeOld = min(dictOld.keys()), max(dictOld.keys())
+            rangeNew = min(dictNew.keys()), max(dictNew.keys())
         else:
             dictOld, dictNew = self.evals[0], self.evals[-1]
+            rangeOld = min(dictOld.keys()), max(dictOld.keys())
+            rangeNew = min(dictNew.keys()), max(dictNew.keys())
             cutOff = 100
             for d in [dictOld, dictNew]:
                 for key in [-cutOff, cutOff]:
@@ -60,7 +64,7 @@ class matedata:
             alpha=0.5,
             color="blue",
             edgecolor="black",
-            label=dateNew,
+            label=dateNew + f"   (in [{rangeNew[0]}, {rangeNew[1]}])",
         )
         listOld = [key for key, val in dictOld.items() for _ in range(val)]
         ax.hist(
@@ -71,9 +75,9 @@ class matedata:
             alpha=0.5,
             color="red",
             edgecolor="yellow",
-            label=dateOld,
+            label=dateOld + f"   (in [{rangeOld[0]}, {rangeOld[1]}])",
         )
-        ax.legend()
+        ax.legend(fontsize=8)
         fig.suptitle(
             f"Distribution of cdb {'depths' if pv else 'evals'} in {self.prefix}.epd."
         )
