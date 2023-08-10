@@ -36,7 +36,7 @@ git clone https://github.com/robertnurnberg/caissatrack && git clone https://git
 ```
 and then from within the cloned `caissatrack` repo either run
 ```shell
-git pull && python ../cdbexplore/cdbbulksearch.py --bulkConcurrency 16 --forever --depthLimit 10 caissa_daily100.epd
+git pull && python ../cdbexplore/cdbbulksearch.py --bulkConcurrency 16 --forever --depthLimit 4 caissa_daily100.epd
 ```
 occasionally, or run
 ```shell
