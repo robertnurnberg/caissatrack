@@ -5,12 +5,15 @@ Track the evaluations of the 100k most popular positions in
 [chessdb.cn](https://chessdb.cn/queryc_en/) (cdb). The positions can be
 found in [`caissa_sorted_100000.epd`](caissa_sorted_100000.epd), where they
 appear in sorted order according to popularity. For example, the starting
-position appears first. Thanks to Joost VandeVondele for preparing
-`caissa_sorted_100000.epd` in July 2023.
+position appears first. The average depth of these positions is 14.6 plies,
+with the deepest one 42 plies away from the starting position. The positions
+have 30.3 pieces on average, and none has fewer than 18 pieces on the board.\
+Thanks to Joost VandeVondele for preparing `caissa_sorted_100000.epd` in July 2023.
 
-The file [`caissa_sorted_100000_cdbpv.epd`](caissa_sorted_100000_cdbpv.epd) is created daily with the help of the script `cdbbulkpv.py` from [cdblib](https://github.com/robertnurnberg/cdblib), and the obtained statistics are written to [`caissatrack.csv`](caissatrack.csv).
-In addition, the file [`caissa_daily100.epd`](caissa_daily100.epd) contains the
-hundred positions with the currently shortest PVs on cdb.
+The file [`caissa_sorted_100000_cdbpv.epd`](caissa_sorted_100000_cdbpv.epd) 
+contains the current cdb evaluations and PVs for each position. It is created daily with the help of the script `cdbbulkpv.py` from [cdblib](https://github.com/robertnurnberg/cdblib), and the obtained statistics are written to [`caissatrack.csv`](caissatrack.csv).
+Moreover, each day the hundred positions with the currently shortest PVs on cdb
+are written to [`caissa_daily100.epd`](caissa_daily100.epd).
 
 ---
 
@@ -22,13 +25,21 @@ hundred positions with the currently shortest PVs on cdb.
 
 ---
 
+## Get involved
+
 If you want to help improve the coverage of these positions on cdb, you could
-manually or systematically explore the positions in `caissa_daily100.epd` or `caissa_sorted_100000.epd`.
-One way to do this is to clone [cdbexplore](https://github.com/vondele/cdbexplore) and then run either
+manually or systematically explore them on [chessdb.cn](https://chessdb.cn/queryc_en/). As an example for the latter, you could clone this and 
+Joost VandeVondele's repo [cdbexplore](https://github.com/vondele/cdbexplore)
+via
+```shell
+git clone https://github.com/robertnurnberg/caissatrack && git clone https://github.com/vondele/cdbexplore && pip install -r cdbexplore/requirements.txt
 ```
-python ../cdbexplore/cdbbulksearch.py --bulkConcurrency 16 --forever --depthLimit 10 caissa_daily100.epd
+and then from within the cloned `caissatrack` repo either run
+```shell
+git pull && python ../cdbexplore/cdbbulksearch.py --bulkConcurrency 16 --forever --depthLimit 10 caissa_daily100.epd
 ```
-or
-```
+occasionally, or run
+```shell
 python ../cdbexplore/cdbbulksearch.py --bulkConcurrency 16 --forever --depthLimit 10 --shuffle caissa_sorted_100000.epd
 ```
+as a long-term job.
