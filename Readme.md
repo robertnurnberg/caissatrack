@@ -15,7 +15,7 @@ contains the current cdb evaluations and PVs for each position. It is created da
 Moreover, each day the hundred positions with the currently shortest PVs on cdb
 are written to [`caissa_daily_shortest.epd`](caissa_daily_shortest.epd), and
 the positions with absolute evaluations in the interval [85, 105]
-are written to [`caissa_daily_edge.epd`](caissa_daily_edge.epd).
+are written to [`caissa_daily_edgy.epd`](caissa_daily_edgy.epd).
 
 ---
 
