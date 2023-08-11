@@ -26,7 +26,7 @@ class matedata:
                     self.evals.append(ast.literal_eval(dict1Str))
                     self.depths.append(ast.literal_eval(dict2Str))
 
-    def create_graph(self, pv=False):
+    def create_graph(self, cutOff=100, pv=False):
         dateOld, dateNew = str(self.date[0]), str(self.date[-1])
         if pv:
             dictOld, dictNew = self.depths[0], self.depths[-1]
@@ -36,7 +36,6 @@ class matedata:
             dictOld, dictNew = self.evals[0], self.evals[-1]
             rangeOld = min(dictOld.keys()), max(dictOld.keys())
             rangeNew = min(dictNew.keys()), max(dictNew.keys())
-            cutOff = 100
             for d in [dictOld, dictNew]:
                 for key in [-cutOff, cutOff]:
                     if key not in d:
@@ -56,10 +55,11 @@ class matedata:
         rangeMax = max(list(dictOld.keys()) + list(dictNew.keys()))
         fig, ax = plt.subplots()
         listNew = [key for key, val in dictNew.items() for _ in range(val)]
+        perBin = 2 if pv else 1 if cutOff <= 100 else 3  # values per bin
         ax.hist(
             listNew,
             range=(rangeMin, rangeMax),
-            bins=(rangeMax - rangeMin) // 1,
+            bins=(rangeMax - rangeMin) // perBin,
             density=True,
             alpha=0.5,
             color="blue",
@@ -70,7 +70,7 @@ class matedata:
         ax.hist(
             listOld,
             range=(rangeMin, rangeMax),
-            bins=(rangeMax - rangeMin) // 1,
+            bins=(rangeMax - rangeMin) // perBin,
             density=True,
             alpha=0.5,
             color="red",
@@ -101,9 +101,15 @@ if __name__ == "__main__":
         help="file with statistics over time",
         default="caissatrack.csv",
     )
+    parser.add_argument(
+        "--cutOff",
+        help="Cutoff value for distribution plot.",
+        type=int,
+        default=125,
+    )
     args = parser.parse_args()
 
     prefix, _, _ = args.filename.partition(".")
     data = matedata(prefix)
-    data.create_graph()
+    data.create_graph(cutOff=args.cutOff)
     data.create_graph(pv=True)
