@@ -13,7 +13,9 @@ Thanks to Joost VandeVondele for preparing `caissa_sorted_100000.epd` in July 20
 The file [`caissa_sorted_100000_cdbpv.epd`](caissa_sorted_100000_cdbpv.epd) 
 contains the current cdb evaluations and PVs for each position. It is created daily with the help of the script `cdbbulkpv.py` from [cdblib](https://github.com/robertnurnberg/cdblib), and the obtained statistics are written to [`caissatrack.csv`](caissatrack.csv).
 Moreover, each day the hundred positions with the currently shortest PVs on cdb
-are written to [`caissa_daily100.epd`](caissa_daily100.epd).
+are written to [`caissa_daily_shortest.epd`](caissa_daily_shortest.epd), and
+the positions with absolute evaluations in the interval [85, 105]
+are written to [`caissa_daily_edge.epd`](caissa_daily_edge.epd).
 
 ---
 
@@ -36,7 +38,7 @@ git clone https://github.com/robertnurnberg/caissatrack && git clone https://git
 ```
 and then from within the cloned `caissatrack` repo either run
 ```shell
-git pull && python ../cdbexplore/cdbbulksearch.py --bulkConcurrency 16 --forever --depthLimit 4 caissa_daily100.epd
+git pull && cat caissa_daily_shortest.epd caissa_daily_edgy.epd > caissa_daily.epd && python ../cdbexplore/cdbbulksearch.py --bulkConcurrency 16 --forever --shuffle caissa_daily.epd
 ```
 occasionally, or run
 ```shell
