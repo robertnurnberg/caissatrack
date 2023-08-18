@@ -79,7 +79,7 @@ class matedata:
         )
         ax.legend(fontsize=8)
         fig.suptitle(
-            f"Distribution of cdb {'depths' if pv else 'evals'} in {self.prefix}.epd."
+            f"Distribution of cdb {'depths' if pv else 'evals'} in {self.prefix}.csv."
         )
         if not pv:
             ax.set_title(
