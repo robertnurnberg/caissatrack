@@ -30,6 +30,15 @@ class matedata:
         dateOld, dateNew = str(self.date[0]), str(self.date[-1])
         if pv:
             dictOld, dictNew = self.depths[0], self.depths[-1]
+            # negative PV lengths mean PVs that end in a terminal draw
+            for d in [dictOld, dictNew]:
+                deleteKeys = []
+                for key, value in d.items():
+                    if key < 0:
+                        d[-key] = d.get(-key, 0) + value
+                        deleteKeys.append(key)
+                for key in deleteKeys:
+                    del d[key]
             rangeOld = min(dictOld.keys()), max(dictOld.keys())
             rangeNew = min(dictNew.keys()), max(dictNew.keys())
         else:
