@@ -1,5 +1,15 @@
 import argparse
 
+
+def pv_ends_in_twofold(fen, pv):
+    import chess
+
+    board = chess.Board(fen)
+    for move in pv:
+        board.push_uci(move)
+    return board.is_repetition(2)
+
+
 epdFile = "caissa_sorted_100000_cdbpv.epd"
 parser = argparse.ArgumentParser(
     description="Extract FENs based on cdb eval or PV length from e.g. caissa_sorted_100000_cdbpv.epd",
@@ -14,6 +24,11 @@ parser.add_argument(
     "--shortest",
     help="Extract the given number of FENs with shortest cdb PV.",
     type=int,
+)
+parser.add_argument(
+    "--ignore2folds",
+    action="store_true",
+    help="Ignore FENs whose cdb PV ends in a twofold repetition.",
 )
 parser.add_argument(
     "--evalMin",
@@ -34,6 +49,8 @@ if args.shortest is None:
     evalMin, evalMax = abs(args.evalMin), abs(args.evalMax)
     if evalMin > evalMax:
         raise Exception(f"Empty range [{evalMin},{evalMax}].")
+    if args.ignore2folds:
+        raise Exception("Option --ignore2folds not supported with eval range.")
 else:
     if not (args.evalMin is None and args.evalMax is None):
         raise Exception("Cannot specify both --shortest and eval range.")
@@ -47,10 +64,10 @@ with open(args.filename) as f:
                 continue
             _, _, cdb = line.partition("; cdb eval: ")
             cdb, _, _ = cdb.partition(";")
-            fen, _, pv = line.partition("; PV: ")
-            l = len(pv.split())
+            epd, _, pv = line.partition("; PV: ")
+            pv = pv.split()
             if shortest:
-                lines.append((fen, l))
+                lines.append((epd, pv))
             else:
                 if cdb.lstrip("-").isnumeric():
                     e = int(cdb)
@@ -59,8 +76,15 @@ with open(args.filename) as f:
                 elif cdb.startswith("-M"):
                     e = -30000 + int(cdb[2:])
                 if abs(e) >= evalMin and abs(e) <= evalMax:
-                    print(f"{fen}; PV length: {l}")
+                    print(f"{epd}; PV length: {len(pv)}")
+
 if shortest:
-    lines.sort(key=lambda t: t[1])
-    for fen, l in lines[:shortest]:
-        print(f"{fen}; PV length: {l}")
+    lines.sort(key=lambda t: len(t[1]))
+    count = 0
+    for epd, pv in lines:
+        fen, _, _ = epd.partition(";")
+        if not args.ignore2folds or not pv_ends_in_twofold(fen, pv):
+            print(f"{epd}; PV length: {len(pv)}")
+            count += 1
+        if count == shortest:
+            break
