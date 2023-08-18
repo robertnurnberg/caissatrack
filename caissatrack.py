@@ -25,7 +25,7 @@ parser.add_argument("--debug", action="store_true")
 args = parser.parse_args()
 
 mtime = os.path.getmtime(args.filename)
-mtime = datetime.datetime.fromtimestamp(mtime).isoformat()
+mtime = datetime.datetime.fromtimestamp(mtime).isoformat(timespec="seconds")
 evals = {}
 pvlengths = {}
 with open(args.filename) as f:
