@@ -1,5 +1,16 @@
 import argparse, os, datetime
 
+
+def pv_ends_in_draw(fen, pv):
+    # detect if final position is a stalemate, draw by 50mr or a 2-fold
+    import chess
+
+    board = chess.Board(fen)
+    for move in pv:
+        board.push_uci(move)
+    return board.is_stalemate() or board.can_claim_draw() or board.is_repetition(2)
+
+
 parser = argparse.ArgumentParser(
     description="Extract cdb eval and PV length statistics from an .epd file.",
     formatter_class=argparse.ArgumentDefaultsHelpFormatter,
@@ -32,7 +43,9 @@ with open(args.filename) as f:
             elif cdb.startswith("-M"):
                 e = -30000 + int(cdb[2:])
             evals[e] = evals.get(e, 0) + 1
-            l = len(pv.split())
+            fen, _, _ = line.partition(";")
+            pv = pv.split()
+            l = -len(pv) if pv_ends_in_draw(fen, pv) else len(pv)
             pvlengths[l] = pvlengths.get(l, 0) + 1
 
 
