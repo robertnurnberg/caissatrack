@@ -26,7 +26,7 @@ class matedata:
                     self.evals.append(ast.literal_eval(dict1Str))
                     self.depths.append(ast.literal_eval(dict2Str))
 
-    def create_graph(self, cutOff=100, pv=False):
+    def create_graph(self, cutOff=125, logplot=False, pv=False):
         dateOld, dateNew = str(self.date[0]), str(self.date[-1])
         if pv:
             dictOld, dictNew = self.depths[0], self.depths[-1]
@@ -87,6 +87,8 @@ class matedata:
                 fontsize=6,
                 family="monospace",
             )
+            if logplot:
+                ax.set_yscale("log")
         plt.savefig(self.prefix + ("pv" if pv else "") + ".png", dpi=300)
 
 
@@ -98,18 +100,23 @@ if __name__ == "__main__":
     parser.add_argument(
         "filename",
         nargs="?",
-        help="file with statistics over time",
+        help="File with cdb eval and PV length statistics over time.",
         default="caissatrack.csv",
     )
     parser.add_argument(
         "--cutOff",
-        help="Cutoff value for distribution plot.",
+        help="Cutoff value for the eval distribution plot.",
         type=int,
         default=125,
+    )
+    parser.add_argument(
+        "--logplot",
+        action="store_true",
+        help="Use logplot for the eval distribution plot.",
     )
     args = parser.parse_args()
 
     prefix, _, _ = args.filename.partition(".")
     data = matedata(prefix)
-    data.create_graph(cutOff=args.cutOff)
+    data.create_graph(cutOff=args.cutOff, logplot=args.logplot)
     data.create_graph(pv=True)
