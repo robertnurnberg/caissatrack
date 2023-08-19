@@ -26,19 +26,17 @@ class matedata:
                     self.evals.append(ast.literal_eval(dict1Str))
                     self.depths.append(ast.literal_eval(dict2Str))
 
-    def create_graph(self, cutOff=125, logplot=False, pv=False):
+    def create_graph(self, cutOff=125, logplot=False, pv=False, negplot=False):
         dateOld, dateNew = str(self.date[0]), str(self.date[-1])
         if pv:
             dictOld, dictNew = self.depths[0], self.depths[-1]
             # negative PV lengths mean PVs that end in a terminal draw
-            for d in [dictOld, dictNew]:
-                deleteKeys = []
-                for key, value in d.items():
-                    if key < 0:
-                        d[-key] = d.get(-key, 0) + value
-                        deleteKeys.append(key)
-                for key in deleteKeys:
-                    del d[key]
+            if not negplot:
+                for d in [dictOld, dictNew]:
+                    for key, value in list(d.items()):
+                        if key < 0:
+                            d[-key] = d.get(-key, 0) + value
+                            del d[key]
             rangeOld = min(dictOld.keys()), max(dictOld.keys())
             rangeNew = min(dictNew.keys()), max(dictNew.keys())
         else:
@@ -49,16 +47,13 @@ class matedata:
                 for key in [-cutOff, cutOff]:
                     if key not in d:
                         d[key] = 0
-                deleteKeys = []
-                for key, value in d.items():
+                for key, value in list(d.items()):
                     if key < -cutOff:
                         d[-cutOff] += value
-                        deleteKeys.append(key)
+                        del d[key]
                     elif key > cutOff:
                         d[cutOff] += value
-                        deleteKeys.append(key)
-                for key in deleteKeys:
-                    del d[key]
+                        del d[key]
 
         rangeMin = min(list(dictOld.keys()) + list(dictNew.keys()))
         rangeMax = max(list(dictOld.keys()) + list(dictNew.keys()))
@@ -90,7 +85,14 @@ class matedata:
         fig.suptitle(
             f"Distribution of cdb {'depths' if pv else 'evals'} in {self.prefix}.csv."
         )
-        if not pv:
+        if pv:
+            if negplot:
+                ax.set_title(
+                    "(A negative depth means that the PV ends in a theoretical draw.)",
+                    fontsize=6,
+                    family="monospace",
+                )
+        else:
             ax.set_title(
                 f"(Evals outside of [-{cutOff},{cutOff}] are included in the +/-{cutOff} buckets.)",
                 fontsize=6,
@@ -123,9 +125,14 @@ if __name__ == "__main__":
         action="store_true",
         help="Use logplot for the eval distribution plot.",
     )
+    parser.add_argument(
+        "--negplot",
+        action="store_true",
+        help="Plot lines with negative depth separately.",
+    )
     args = parser.parse_args()
 
     prefix, _, _ = args.filename.partition(".")
     data = matedata(prefix)
     data.create_graph(cutOff=args.cutOff, logplot=args.logplot)
-    data.create_graph(pv=True)
+    data.create_graph(pv=True, negplot=args.negplot)
