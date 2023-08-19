@@ -33,13 +33,10 @@ class matedata:
             # negative PV lengths mean PVs that end in a terminal draw
             if not negplot:
                 for d in [dictOld, dictNew]:
-                    deleteKeys = []
-                    for key, value in d.items():
+                    for key, value in list(d.items()):
                         if key < 0:
                             d[-key] = d.get(-key, 0) + value
-                            deleteKeys.append(key)
-                    for key in deleteKeys:
-                        del d[key]
+                            del d[key]
             rangeOld = min(dictOld.keys()), max(dictOld.keys())
             rangeNew = min(dictNew.keys()), max(dictNew.keys())
         else:
@@ -50,16 +47,13 @@ class matedata:
                 for key in [-cutOff, cutOff]:
                     if key not in d:
                         d[key] = 0
-                deleteKeys = []
-                for key, value in d.items():
+                for key, value in list(d.items()):
                     if key < -cutOff:
                         d[-cutOff] += value
-                        deleteKeys.append(key)
+                        del d[key]
                     elif key > cutOff:
                         d[cutOff] += value
-                        deleteKeys.append(key)
-                for key in deleteKeys:
-                    del d[key]
+                        del d[key]
 
         rangeMin = min(list(dictOld.keys()) + list(dictNew.keys()))
         rangeMax = max(list(dictOld.keys()) + list(dictNew.keys()))
@@ -94,7 +88,7 @@ class matedata:
         if pv:
             if negplot:
                 ax.set_title(
-                    "(Negative depths mean that the PV ends in a theoretical draw.)",
+                    "(A negative depth means that the PV ends in a theoretical draw.)",
                     fontsize=6,
                     family="monospace",
                 )
