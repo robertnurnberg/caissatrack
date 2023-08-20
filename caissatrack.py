@@ -21,11 +21,17 @@ parser.add_argument(
     help="file with scored FENs",
     default="caissa_sorted_100000_cdbpv.epd",
 )
-parser.add_argument("--debug", action="store_true")
+parser.add_argument(
+    "--time",
+    help="time to be used for .csv entry (use .epd time stamp if None)",
+)
 args = parser.parse_args()
 
-mtime = os.path.getmtime(args.filename)
-mtime = datetime.datetime.fromtimestamp(mtime).isoformat(timespec="seconds")
+mtime = args.time
+if mtime is None:
+    mtime = os.path.getmtime(args.filename)
+    mtime = datetime.datetime.fromtimestamp(mtime).isoformat(timespec="seconds")
+
 evals = {}
 pvlengths = {}
 with open(args.filename) as f:
