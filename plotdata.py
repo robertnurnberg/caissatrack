@@ -134,8 +134,8 @@ class matedata:
                 fontsize=6,
                 family="monospace",
             )
-            if logplot:
-                ax.set_yscale("log")
+        if logplot:
+            ax.set_yscale("log")
         plt.savefig(self.prefix + ("pv" if pv else "") + ".png", dpi=300)
 
 
@@ -158,17 +158,18 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--logplot",
-        action="store_true",
-        help="Use logplot for the eval distribution plot.",
+        action="count",
+        default=0,
+        help="Use logplot for the distribution plot. Once just eval plot, twice also PV depth plot.",
     )
     parser.add_argument(
         "--negplot",
         action="store_true",
-        help="Plot lines with negative depth separately.",
+        help="Plot PV lines with negative depth separately.",
     )
     args = parser.parse_args()
 
     prefix, _, _ = args.filename.partition(".")
     data = matedata(prefix)
     data.create_graph(cutOff=args.cutOff, logplot=args.logplot)
-    data.create_graph(pv=True, negplot=args.negplot)
+    data.create_graph(pv=True, logplot=args.logplot >= 2, negplot=args.negplot)
