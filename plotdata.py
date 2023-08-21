@@ -118,13 +118,12 @@ class matedata:
                     weight="bold",
                 )
         ax.legend(fontsize=8)
-        fig.suptitle(
-            f"Distribution of cdb {'depths' if pv else 'evals'} in {self.prefix}.csv."
-        )
+        bold = (r"$\bf{depths}$" + " (PV lengths in plies)") if pv else r"$\bf{evals}$"
+        fig.suptitle(f"Distribution of cdb {bold} in {self.prefix}.csv.")
         if pv:
             if negplot:
                 ax.set_title(
-                    "(A negative depth means that the PV ends in a theoretically known result, with 2folds counting as 3folds.)",
+                    "(A negative depth -d means that a PV with d plies ends in a theoretically known result, with 2folds counting as 3folds.)",
                     fontsize=6,
                     family="monospace",
                 )
