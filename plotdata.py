@@ -78,7 +78,6 @@ class matedata:
                 listIdx,
                 range=(rangeMin, rangeMax),
                 bins=(rangeMax - rangeMin) // perBin,
-                density=True,
                 alpha=0.5,
                 color=color[Idx],
                 edgecolor=edgecolor[Idx],
