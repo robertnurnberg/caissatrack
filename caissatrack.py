@@ -10,12 +10,28 @@ def abssort_str(d):
     return "{" + "; ".join(l) + "}"
 
 
-def pv_ends_in_draw(fen, pv):
-    # detect if the final position is a stalemate, draw by 50mr, or a 2-fold
+def encode_depth(fen, pv, e):
+    # use negative values to encode terminal PVs (with known result)
+    d = len(pv)
     board = chess.Board(fen)
     for move in pv:
         board.push_uci(move)
-    return board.is_stalemate() or board.can_claim_draw() or board.is_repetition(2)
+    if board.is_fifty_moves():
+        return -10000 - d  # 50mr
+    if board.is_stalemate():
+        return -20000 - d  # stalemate
+    if board.is_checkmate():
+        return -30000 - d  # checkmate
+    pc = 64 - str(board).count(".")
+    if pc <= 7:
+        if e is None or (abs(e) > 50 and abs(e) < 20000):
+            return -60000 - d  # TB unknown
+        if abs(e) >= 20000:
+            return -50000 - d  # TB wins
+        return -40000 - d  # TB draws
+    if board.is_repetition(2):  # slowest check, so test last
+        return -d  # 2fold (stands for 3fold repetition)
+    return d
 
 
 def process_line(line):
@@ -31,10 +47,11 @@ def process_line(line):
         e = 30000 - int(cdb[1:])
     elif cdb.startswith("-M"):
         e = -30000 + int(cdb[2:])
+    else:
+        e = None
     fen, _, _ = line.partition(";")
-    pv = pv.split()
-    l = -len(pv) if pv_ends_in_draw(fen, pv) else len(pv)
-    return e, l
+    d = encode_depth(fen, pv.split(), e)
+    return e, d
 
 
 parser = argparse.ArgumentParser(

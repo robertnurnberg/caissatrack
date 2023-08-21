@@ -31,11 +31,14 @@ class matedata:
         if pv:
             dictOld, dictNew = self.depths[0], self.depths[-1]
             # negative PV lengths mean PVs that end in a terminal draw
-            if not negplot:
-                for d in [dictOld, dictNew]:
-                    for key, value in list(d.items()):
-                        if key < 0:
-                            d[-key] = d.get(-key, 0) + value
+            for d in [dictOld, dictNew]:
+                for key, value in list(d.items()):
+                    if key <= -10000 or (key < 0 and not negplot):
+                        newkey = -(-key % 10000) if key <= -10000 else key
+                        if not negplot:
+                            newkey = -newkey
+                        if key != newkey:
+                            d[newkey] = d.get(newkey, 0) + value
                             del d[key]
             rangeOld = min(dictOld.keys()), max(dictOld.keys())
             rangeNew = min(dictNew.keys()), max(dictNew.keys())
