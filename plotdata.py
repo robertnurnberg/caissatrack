@@ -88,7 +88,7 @@ class matedata:
                 terminal = []
                 term = [
                     "2fold",
-                    "50 mr",  # <= -10000
+                    "50mr",  # <= -10000
                     "stalemate",  # <= -20000
                     "mate",  # <= -30000
                     "TB draw",  # <= -40000
@@ -108,7 +108,7 @@ class matedata:
                         terminal.append(f"{term[step]} ({c})")
                 terminalStr = "Terminal PV leafs: " + ", ".join(terminal)
                 ax.text(
-                    0.1,
+                    0.05,
                     0.02 - Idx * 0.02,
                     terminalStr,
                     transform=fig.transFigure,
