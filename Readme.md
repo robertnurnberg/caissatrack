@@ -32,6 +32,26 @@ are written to [`caissa_daily_edgy.epd`](caissa_daily_edgy.epd).
 
 ---
 
+## Progress
+
+The following graph attempts to measure the progress cdb makes in exploring
+and evaluating the positions in `caissa_sorted_100000.epd`. It plots the
+evolutions in time of the two (daily) indicators
+$`E = \frac{1}{N} \sum_i \left(\min\{\frac{|e_i|}{100},2\} - 1\right)^2`$
+and
+$D=\sum_i \frac{1}{d_i}$,
+where $(e_i, d_i)$ are the evaluation and depth values for the 100K positions,
+with the convention that $d_i = \infty$ if the position's PV ends in a terminal
+leaf (2-fold repetition, 50 moves rule, stalemate, checkmate or 7men EGTB).
+$E$ measures how certain cdb's evaluations are, while $D$ simply sums the
+inverses of the lengths of the non-resolved PVs. Note that as cdb (slowly) 
+approaches the 32men EGTB, $E$ should converge to 1, while $D$
+should converge to 0.
+
+<p align="center"> <img src="caissatracktime.png?raw=true"> </p>
+
+---
+
 ## Get involved
 
 If you want to help improve the coverage of these positions on cdb, you could

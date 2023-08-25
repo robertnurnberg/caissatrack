@@ -4,8 +4,47 @@ import matplotlib.dates as mdates
 from datetime import datetime
 from matplotlib.ticker import MaxNLocator
 
+NoP = 10**5  # total number of positions
+evalIndicatorStr, depthIndicatorStr = "", ""
 
-class matedata:
+
+def eval_indicator(d):
+    global evalIndicatorStr
+    evalIndicatorStr = (
+        r"$\frac{1}{N} \sum_i\ \left(\min\{\frac{|e_i|}{100},2\} - 1\right)^2$"
+    )
+    e = count = 0
+    for k, v in d.items():
+        k = min(abs(k), 200)
+        e += v * (k / 100 - 1) ** 2 / NoP
+        count += v
+    assert count == NoP, "Counting error"
+    return e
+
+
+# def depth_indicator(d):  # see depth_indicator_formula
+#    global depthIndicatorStr
+#    depthIndicatorStr = r"$\left(\prod_i\ d_i\right)^{\frac{1}{N}}$"
+#    p, count = 1, 0
+#    for k, v in d.items():
+#        k = (-k % 10000) if k < 0 else k
+#        p *= k ** (v / NoP)
+#        count += v
+#    assert count == NoP, "Counting error"
+#    return p
+
+
+def depth_indicator(d):
+    global depthIndicatorStr
+    depthIndicatorStr = r"$\sum_i\ \frac{1}{d_i}$"
+    s = 0
+    for k, v in d.items():
+        if k > 0:
+            s += v / k
+    return s
+
+
+class caissadata:
     def __init__(self, prefix):
         self.prefix = prefix
         self.date = []  # datetime entries
@@ -19,18 +58,21 @@ class matedata:
                 if line:
                     pos1 = line.find(",{")
                     pos2 = line.find("},{")
-                    dateStr, _, _ = line.partition("T")
+                    dateStr, _, _ = line.partition(",")
                     dict1Str = line[pos1 + 1 : pos2 + 1].replace(";", ",")
                     dict2Str = line[pos2 + 2 :].replace(";", ",")
                     self.date.append(dateStr)
                     self.evals.append(ast.literal_eval(dict1Str))
                     self.depths.append(ast.literal_eval(dict2Str))
 
-    def create_graph(self, cutOff=125, logplot=False, pv=False, negplot=False):
+    def create_distribution_graph(
+        self, cutOff=125, logplot=False, pv=False, negplot=False
+    ):
         color, edgecolor, label = ["red", "blue"], ["yellow", "black"], [None, None]
         dictList = [None, None]  # list for the two dicts to plot
         rangeMin, rangeMax = None, None
         for Idx in [0, -1]:
+            dateStr, _, _ = self.date[Idx].partition("T")
             if pv:
                 dictList[Idx] = self.depths[Idx].copy()
                 # negative PV lengths mean PVs that end in a terminal draw
@@ -47,16 +89,15 @@ class matedata:
                     negmax = max([k for k in dictList[Idx].keys() if k < 0])
                     posmin = min([k for k in dictList[Idx].keys() if k > 0])
                     cup = r"$\cup$"
-                    label[Idx] = (
-                        str(self.date[Idx])
-                        + f"   (in [{mi}, {negmax}]{cup}[{posmin}, {ma}])"
-                    )
+                    label[
+                        Idx
+                    ] = f"{dateStr}   (in [{mi}, {negmax}]{cup}[{posmin}, {ma}])"
                 else:
-                    label[Idx] = str(self.date[Idx]) + f"   (in [{mi}, {ma}])"
+                    label[Idx] = f"{dateStr}   (in [{mi}, {ma}])"
             else:
-                dictList[Idx] = self.evals[Idx]
+                dictList[Idx] = self.evals[Idx].copy()
                 mi, ma = min(dictList[Idx].keys()), max(dictList[Idx].keys())
-                label[Idx] = str(self.date[Idx]) + f"   (in [{mi}, {ma}])"
+                label[Idx] = f"{dateStr}   (in [{mi}, {ma}])"
                 for key in [-cutOff, cutOff]:
                     if key not in dictList[Idx]:
                         dictList[Idx][key] = 0
@@ -136,6 +177,95 @@ class matedata:
             ax.set_yscale("log")
         plt.savefig(self.prefix + ("pv" if pv else "") + ".png", dpi=300)
 
+    def create_timeseries_graph(self, plotStart=0):
+        dateData = [datetime.fromisoformat(d) for d in self.date[plotStart:]]
+        evalsData, depthsData = [], []
+
+        for d in self.evals[plotStart:]:
+            evalsData.append(eval_indicator(d))
+        for d in self.depths[plotStart:]:
+            depthsData.append(depth_indicator(d))
+
+        fig, ax = plt.subplots()
+        yColor, dateColor = "black", "black"
+        evalColor, depthColor = "blue", "firebrick"
+        ax2 = ax.twinx()
+        evalDotSize, evalLineWidth, evalAlpha = 15, 1, 0.75
+        depthDotSize, depthLineWidth, depthAlpha = 15, 1, 0.75
+        ax.scatter(
+            dateData,
+            evalsData,
+            color=evalColor,
+            s=evalDotSize,
+            alpha=evalAlpha,
+        )
+        ax2.scatter(
+            dateData,
+            depthsData,
+            color=depthColor,
+            s=depthDotSize,
+            alpha=depthAlpha,
+        )
+        ax.plot(
+            dateData,
+            evalsData,
+            color=evalColor,
+            linewidth=evalLineWidth,
+            alpha=evalAlpha,
+        )
+        ax2.plot(
+            dateData,
+            depthsData,
+            color=depthColor,
+            linewidth=evalLineWidth,
+            alpha=depthAlpha,
+        )
+        ax.tick_params(axis="y", labelcolor=evalColor)
+        ax2.tick_params(axis="y", labelcolor=depthColor)
+        ax.xaxis.set_major_formatter(mdates.DateFormatter("%Y-%m-%d"))
+        plt.setp(
+            ax.get_xticklabels(),
+            rotation=45,
+            ha="right",
+            rotation_mode="anchor",
+            fontsize=6,
+        )
+        ax.grid(alpha=0.4, linewidth=0.5)
+        fig.suptitle(f"     Progress indicators from {self.prefix}.csv.")
+        plt.figtext(0.02, 0.91, evalIndicatorStr, fontsize=9, color=evalColor)
+        plt.figtext(0.91, 0.91, depthIndicatorStr, fontsize=9, color=depthColor)
+        pair = r"$(e_i, d_i)$"
+        infty = r"$d_i=\infty$"
+        noStr = str(NoP)
+        if noStr.endswith("0" * 9):
+            noStr = noStr[:-9] + "G"  #  :)
+        elif noStr.endswith("0" * 6):
+            noStr = noStr[:-6] + "M"
+        elif noStr.endswith("0" * 3):
+            noStr = noStr[:-3] + "K"
+        ax.set_title(
+            f"     Based on {noStr} (eval, depth) data points {pair}, {infty} for terminal PVs.",
+            fontsize=6,
+            family="monospace",
+        )
+        # show start of stable PV usage
+        stableDate, stableColor = datetime.fromisoformat("2023-08-24"), "green"
+        ax.axvline(x=stableDate, color=stableColor, linestyle="--", linewidth="1")
+        yPos = min(evalsData) - 0.06 * (max(evalsData) - min(evalsData))
+        ax.text(
+            stableDate,
+            yPos,
+            "stable PV",
+            color=stableColor,
+            ha="center",
+            va="top",
+            rotation="vertical",
+            fontsize=6,
+            family="monospace",
+            weight="bold",
+        )
+        plt.savefig(self.prefix + "time.png", dpi=300)
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
@@ -165,9 +295,18 @@ if __name__ == "__main__":
         action="store_true",
         help="Plot PV lines with negative depth separately.",
     )
+    parser.add_argument(
+        "--onlyTime",
+        action="store_true",
+        help="Create only time evolution graphs.",
+    )
     args = parser.parse_args()
 
     prefix, _, _ = args.filename.partition(".")
-    data = matedata(prefix)
-    data.create_graph(cutOff=args.cutOff, logplot=args.logplot)
-    data.create_graph(pv=True, logplot=args.logplot >= 2, negplot=args.negplot)
+    data = caissadata(prefix)
+    if not args.onlyTime:
+        data.create_distribution_graph(cutOff=args.cutOff, logplot=args.logplot)
+        data.create_distribution_graph(
+            pv=True, logplot=args.logplot >= 2, negplot=args.negplot
+        )
+    data.create_timeseries_graph()
