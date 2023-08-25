@@ -9,20 +9,19 @@ evalIndicatorStr, depthIndicatorStr = "", ""
 
 
 def eval_indicator(d):
-    global evalIndicatorStr
+    global evalIndicatorStr, NoP
     evalIndicatorStr = (
         r"$\frac{1}{N} \sum_i\ \left(\min\{\frac{|e_i|}{100},2\} - 1\right)^2$"
     )
-    e = count = 0
+    e = NoP = 0
     for k, v in d.items():
         k = min(abs(k), 200)
-        e += v * (k / 100 - 1) ** 2 / NoP
-        count += v
-    assert count == NoP, "Counting error"
-    return e
+        e += v * (k / 100 - 1) ** 2
+        NoP += v
+    return e / NoP
 
 
-# def depth_indicator(d):  # see depth_indicator_formula
+# def depth_indicator(d):
 #    global depthIndicatorStr
 #    depthIndicatorStr = r"$\left(\prod_i\ d_i\right)^{\frac{1}{N}}$"
 #    p, count = 1, 0
@@ -42,6 +41,14 @@ def depth_indicator(d):
         if k > 0:
             s += v / k
     return s
+
+
+def count_edgy_evals(d, lower, upper):
+    c = 0
+    for k, v in d.items():
+        if lower <= abs(k) <= upper:
+            c += v
+    return c
 
 
 class caissadata:
@@ -177,7 +184,7 @@ class caissadata:
             ax.set_yscale("log")
         plt.savefig(self.prefix + ("pv" if pv else "") + ".png", dpi=300)
 
-    def create_timeseries_graph(self, plotStart=0):
+    def create_timeseries_graph(self, plotStart=0, edgeMin=None, edgeMax=None):
         dateData = [datetime.fromisoformat(d) for d in self.date[plotStart:]]
         evalsData, depthsData = [], []
 
@@ -264,6 +271,53 @@ class caissadata:
             family="monospace",
             weight="bold",
         )
+        if not (edgeMin is None or edgeMax is None):
+            edgeData = []
+            for d in self.evals[plotStart:]:
+                edgeData.append(count_edgy_evals(d, edgeMin, edgeMax))
+            ax3 = ax.twinx()
+            edgeColor = "tab:pink"
+            edgeDotSize, edgeLineWidth, edgeAlpha = (
+                evalDotSize / 2,
+                evalLineWidth / 2,
+                evalAlpha / 2,
+            )
+            e_i = r"$ \leq |e_i| \leq $"
+            edgeStr = f"#{{{edgeMin}{e_i}{edgeMax}}}"
+            ax3.scatter(
+                dateData,
+                edgeData,
+                label=edgeStr,
+                color=edgeColor,
+                s=edgeDotSize,
+                alpha=edgeAlpha,
+            )
+            ax3.plot(
+                dateData,
+                edgeData,
+                color=edgeColor,
+                linewidth=edgeLineWidth,
+                alpha=edgeAlpha,
+            )
+            legend = ax3.legend(fontsize=6, loc="upper left", labelcolor=edgeColor)
+            legend.get_frame().set_alpha(0.5)
+            t = [min(edgeData), max(edgeData)]
+            ax3.set_yticks(t, t)
+            plt.setp(
+                ax3.get_yticklabels(),
+                position=(1.06, 0),
+                fontsize=6,
+                color=edgeColor,
+            )
+            plt.setp(
+                ax3.get_yticklines(),
+                color=edgeColor,
+                markersize=24,
+                markeredgewidth=0.1,
+            )
+            t = [int(l) for l in ax2.get_yticks()[2:-1]]  # hide lowest ylabel
+            ax2.set_yticks(t, t)
+
         plt.savefig(self.prefix + "time.png", dpi=300)
 
 
@@ -300,6 +354,18 @@ if __name__ == "__main__":
         action="store_true",
         help="Create only time evolution graphs.",
     )
+    parser.add_argument(
+        "--edgeMin",
+        help="Lower value for edgy evals to count in time evolution graphs.",
+        type=int,
+        default=None,
+    )
+    parser.add_argument(
+        "--edgeMax",
+        help="Upper value for edgy evals to count in time evolution graphs.",
+        type=int,
+        default=None,
+    )
     args = parser.parse_args()
 
     prefix, _, _ = args.filename.partition(".")
@@ -309,4 +375,6 @@ if __name__ == "__main__":
         data.create_distribution_graph(
             pv=True, logplot=args.logplot >= 2, negplot=args.negplot
         )
-    data.create_timeseries_graph()
+    if args.edgeMin is None or args.edgeMax is None:
+        args.edgeMin = args.edgeMax = None
+    data.create_timeseries_graph(edgeMin=args.edgeMin, edgeMax=args.edgeMax)
