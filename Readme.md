@@ -39,7 +39,7 @@ and evaluating the positions in `caissa_sorted_100000.epd`.\
 It plots the evolutions in time of the two (daily) indicators
 ```math
 E = \frac{1}{N} \sum_i \left(\min\{\frac{|e_i|}{100},2\} - 1\right)^2
-\qquad \text{and}
+\qquad \text{and} \qquad
 D=\sum_i \frac{1}{d_i},
 ```
 where $(e_i, d_i)$ are the evaluation and depth values for the 100K positions,
