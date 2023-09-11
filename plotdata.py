@@ -21,18 +21,6 @@ def eval_indicator(d):
     return e / NoP
 
 
-# def depth_indicator(d):
-#    global depthIndicatorStr
-#    depthIndicatorStr = r"$\left(\prod_i\ d_i\right)^{\frac{1}{N}}$"
-#    p, count = 1, 0
-#    for k, v in d.items():
-#        k = (-k % 10000) if k < 0 else k
-#        p *= k ** (v / NoP)
-#        count += v
-#    assert count == NoP, "Counting error"
-#    return p
-
-
 def depth_indicator(d):
     global depthIndicatorStr
     depthIndicatorStr = r"$\sum_i\ \frac{1}{d_i}$"
@@ -315,8 +303,6 @@ class caissadata:
                 markersize=24,
                 markeredgewidth=0.1,
             )
-            t = [int(l) for l in ax2.get_yticks()[2:-1]]  # hide lowest ylabel
-            ax2.set_yticks(t, t)
 
         plt.savefig(self.prefix + "time.png", dpi=300)
 
