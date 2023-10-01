@@ -245,20 +245,21 @@ class caissadata:
         )
         # show start of stable PV usage
         stableDate, stableColor = datetime.fromisoformat("2023-08-24"), "green"
-        ax.axvline(x=stableDate, color=stableColor, linestyle="--", linewidth="1")
-        yPos = min(evalsData) - 0.06 * (max(evalsData) - min(evalsData))
-        ax.text(
-            stableDate,
-            yPos,
-            "stable PV",
-            color=stableColor,
-            ha="center",
-            va="top",
-            rotation="vertical",
-            fontsize=6,
-            family="monospace",
-            weight="bold",
-        )
+        if stableDate > dateData[0]:
+            ax.axvline(x=stableDate, color=stableColor, linestyle="--", linewidth="1")
+            yPos = min(evalsData) - 0.06 * (max(evalsData) - min(evalsData))
+            ax.text(
+                stableDate,
+                yPos,
+                "stable PV",
+                color=stableColor,
+                ha="center",
+                va="top",
+                rotation="vertical",
+                fontsize=6,
+                family="monospace",
+                weight="bold",
+            )
         if not (edgeMin is None or edgeMax is None):
             edgeData = []
             for d in self.evals[plotStart:]:
@@ -291,16 +292,20 @@ class caissadata:
             legend.get_frame().set_alpha(0.5)
             t = [min(edgeData), max(edgeData)]
             ax3.set_yticks(t, t)
+            maxDigits = len(str(t[1]))
+            print(maxDigits)
+            labelXpos = 1.06 + 0.01 * min(0, 4 - maxDigits)
+            markerSize = 24 + 3 * min(0, 4 - maxDigits)
             plt.setp(
                 ax3.get_yticklabels(),
-                position=(1.06, 0),
+                position=(labelXpos, 0),
                 fontsize=6,
                 color=edgeColor,
             )
             plt.setp(
                 ax3.get_yticklines(),
                 color=edgeColor,
-                markersize=24,
+                markersize=markerSize,
                 markeredgewidth=0.1,
             )
 
