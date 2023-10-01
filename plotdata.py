@@ -304,10 +304,10 @@ class caissadata:
             )
             plt.setp(
                 ax3.get_yticklines(),
-                color=edgeColor,
                 markersize=markerSize,
-                markeredgewidth=0.1,
+                markeredgewidth=0.2,
             )
+            ax3.tick_params(axis="y", colors=edgeColor)
 
         plt.savefig(self.prefix + "time.png", dpi=300)
 
