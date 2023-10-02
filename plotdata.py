@@ -293,7 +293,6 @@ class caissadata:
             t = [min(edgeData), max(edgeData)]
             ax3.set_yticks(t, t)
             maxDigits = len(str(t[1]))
-            print(maxDigits)
             labelXpos = 1.06 + 0.01 * min(0, 4 - maxDigits)
             markerSize = 24 + 3 * min(0, 4 - maxDigits)
             plt.setp(
