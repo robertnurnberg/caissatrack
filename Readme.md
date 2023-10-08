@@ -16,7 +16,7 @@ contains the current cdb evaluations and PVs for each position. It is created
 daily with the help of the script `cdbbulkpv.py` from 
 [cdblib](https://github.com/robertnurnberg/cdblib), and the obtained statistics
 are written to [`caissatrack.csv`](caissatrack.csv).
-Moreover, each day the hundred positions with the currently shortest PVs on cdb
+Moreover, each day the thousand positions with the currently shortest PVs on cdb
 (ignoring PVs ending in a two-fold repetition)
 are written to [`caissa_daily_shortest.epd`](caissa_daily_shortest.epd), and
 the positions with absolute evaluations in the interval [85, 105]
