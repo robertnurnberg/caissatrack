@@ -4,7 +4,7 @@ import matplotlib.dates as mdates
 from datetime import datetime
 from matplotlib.ticker import MaxNLocator
 
-NoP = 10**5  # total number of positions
+NoP = 10 ** 5  # total number of positions
 evalIndicatorStr, depthIndicatorStr = "", ""
 
 
