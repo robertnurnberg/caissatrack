@@ -74,3 +74,38 @@ occasionally, or run
 python ../cdbexplore/cdbbulksearch.py --bulkConcurrency 16 --forever --depthLimit 10 --shuffle caissa_sorted_100000.epd
 ```
 as a long-term job.
+
+An automated solution is to run the script `launch_caissa_daily.sh`
+```shell
+#!/bin/bash
+
+tempdir="/tmp/caissatrack"
+gitdir="$HOME/git"
+bulkconcurrency=4
+depthlimit=20
+user="unknown"
+
+for dir in "$tempdir" "$gitdir"; do
+    if [ ! -d "$dir" ]; then
+        mkdir "$dir"
+    fi
+done
+cd "$gitdir"
+for repo in "cdbexplore" "caissatrack"; do
+    if [ ! -d "$gitdir/$repo" ]; then
+        git clone "https://github.com/robertnurnberg/$repo"
+    fi
+    cd $repo && git pull >&pull.log
+    cd ..
+done
+
+python3 "$gitdir"/cdbexplore/cdbbulksearch.py "$gitdir"/caissatrack/caissa_daily_shortest.epd --bulkConcurrency $bulkconcurrency --user $user --forever --reload --maxDepthLimit $depthlimit >&"$tempdir"/caissa_daily_shortest.log &
+python3 "$gitdir"/cdbexplore/cdbbulksearch.py "$gitdir"/caissatrack/caissa_daily_edgy.epd --bulkConcurrency $bulkconcurrency --user $user --forever --reload --maxDepthLimit $depthlimit >&"$tempdir"/caissa_daily_edgy.log &
+```
+automatically via `.crontab` entries of the form
+```
+@reboot sleep 20 && /path_to_script/launch_caissa_daily.sh
+55 6 * * * cd git/caissatrack && git pull
+```
+where the second entry is really only needed for server-like machines that run
+24/7.
