@@ -4,7 +4,7 @@ import matplotlib.dates as mdates
 from datetime import datetime
 from matplotlib.ticker import MaxNLocator
 
-NoP = 10 ** 5  # total number of positions
+NoP = 10**5  # total number of positions
 evalIndicatorStr, depthIndicatorStr = "", ""
 
 
@@ -152,7 +152,7 @@ class caissadata:
                     family="monospace",
                     weight="bold",
                 )
-        ax.legend(fontsize=8)
+        ax.legend(fontsize=7)
         bold = (r"$\bf{depths}$" + " (PV lengths in plies)") if pv else r"$\bf{evals}$"
         fig.suptitle(f"Distribution of cdb {bold} in {self.prefix}.csv.")
         if pv:
@@ -217,6 +217,12 @@ class caissadata:
         )
         ax.tick_params(axis="y", labelcolor=evalColor)
         ax2.tick_params(axis="y", labelcolor=depthColor)
+        ax2.ticklabel_format(axis="y", style="plain")
+        if max(depthsData) >= 10**6:
+            plt.setp(
+                ax2.get_yticklabels(),
+                fontsize=8,
+            )
         ax.xaxis.set_major_formatter(mdates.DateFormatter("%Y-%m-%d"))
         plt.setp(
             ax.get_xticklabels(),
