@@ -81,9 +81,41 @@ An automated solution is to run the script `launch_caissa_daily.sh`
 
 tempdir="/tmp/caissatrack"
 gitdir="$HOME/git"
+concurrency=16
 bulkconcurrency=4
-depthlimit=20
+depthlimit=10
 user="unknown"
+
+usage() {
+    echo "Usage: $0 [options]"
+    echo "Options:"
+    echo "  -c <value>     Concurrency (default: $concurrency)"
+    echo "  -b <value>     Bulk Concurrency (default: $bulkconcurrency)"
+    echo "  -d <value>     Depth Limit (default: $depthlimit)"
+    echo "  -u <str>       User Name (default: $user)"
+    exit 1
+}
+
+while getopts "c:b:d:u:" opt; do
+    case $opt in
+    c)
+        concurrency=$OPTARG
+        ;;
+    b)
+        bulkconcurrency=$OPTARG
+        ;;
+    d)
+        depthlimit=$OPTARG
+        ;;
+    u)
+        user=$OPTARG
+        ;;
+    \?)
+        echo "Invalid option: -$OPTARG"
+        usage
+        ;;
+    esac
+done
 
 for dir in "$tempdir" "$gitdir"; do
     if [ ! -d "$dir" ]; then
@@ -99,8 +131,8 @@ for repo in "cdbexplore" "caissatrack"; do
     cd ..
 done
 
-python3 "$gitdir"/cdbexplore/cdbbulksearch.py "$gitdir"/caissatrack/caissa_daily_shortest.epd --bulkConcurrency $bulkconcurrency --user $user --forever --reload --maxDepthLimit $depthlimit >&"$tempdir"/caissa_daily_shortest.log &
-python3 "$gitdir"/cdbexplore/cdbbulksearch.py "$gitdir"/caissatrack/caissa_daily_edgy.epd --bulkConcurrency $bulkconcurrency --user $user --forever --reload --maxDepthLimit $depthlimit >&"$tempdir"/caissa_daily_edgy.log &
+python3 "$gitdir"/cdbexplore/cdbbulksearch.py "$gitdir"/caissatrack/caissa_daily_shortest.epd --concurrency $concurrency --bulkConcurrency $bulkconcurrency --user $user --forever --reload --maxDepthLimit $depthlimit >&"$tempdir"/caissa_daily_shortest.log &
+python3 "$gitdir"/cdbexplore/cdbbulksearch.py "$gitdir"/caissatrack/caissa_daily_edgy.epd --concurrency $concurrency --bulkConcurrency $bulkconcurrency --user $user --forever --reload --maxDepthLimit $depthlimit >&"$tempdir"/caissa_daily_edgy.log &
 ```
 automatically via `.crontab` entries of the form
 ```
