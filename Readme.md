@@ -77,7 +77,7 @@ as a long-term job.
 
 An automated solution is to run the script `launch_caissa_daily.sh`
 
-https://github.com/robertnurnberg/caissatrack/blob/script/launch_caissa_daily.sh
+https://github.com/robertnurnberg/caissatrack/blob/1a576dad978ca68d0bc3a834c8deb3cad87bf3d5/launch_caissa_daily.sh#L1-L56
 
 automatically via `.crontab` entries of the form
 ```
