@@ -75,9 +75,9 @@ python ../cdbexplore/cdbbulksearch.py --bulkConcurrency 16 --forever --depthLimi
 ```
 as a long-term job.
 
-An automated solution is to run the script `launch_caissa_daily.sh`
+An automated solution is to run the script [`launch_caissa_daily.sh`](launch_caissa_daily.sh)
 
-https://github.com/robertnurnberg/caissatrack/blob/a90644acbcabe0966445bed2c37941697c2515d0/launch_caissa_daily.sh
+https://github.com/robertnurnberg/caissatrack/blob/1a576dad978ca68d0bc3a834c8deb3cad87bf3d5/launch_caissa_daily.sh#L1-L56
 
 automatically via `.crontab` entries of the form
 ```
