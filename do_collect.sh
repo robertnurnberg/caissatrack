@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# exit on errors
+set -e
+
 temp_file="_tmp_caissa_sorted_100000_cdbpv.epd"
 
 if [ -f "$temp_file" ]; then
