@@ -41,6 +41,7 @@ def process_line(line):
 
     _, _, cdb = line.partition(" cdb eval: ")
     cdb, _, pv = cdb.partition("; PV: ")
+    pv, _, _ = pv.partition(";")
     if cdb.lstrip("-").isnumeric():
         e = int(cdb)
     elif cdb.startswith("M"):
