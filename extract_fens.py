@@ -65,6 +65,7 @@ with open(args.filename) as f:
             _, _, cdb = line.partition("; cdb eval: ")
             cdb, _, _ = cdb.partition(";")
             epd, _, pv = line.partition("; PV: ")
+            pv, _, _ = pv.partition(";")
             pv = pv.split()
             if shortest:
                 lines.append((epd, pv))
