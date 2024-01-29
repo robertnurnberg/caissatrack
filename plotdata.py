@@ -185,8 +185,13 @@ class caissadata:
         yColor, dateColor = "black", "black"
         evalColor, depthColor = "blue", "firebrick"
         ax2 = ax.twinx()
-        evalDotSize, evalLineWidth, evalAlpha = 15, 1, 0.75
-        depthDotSize, depthLineWidth, depthAlpha = 15, 1, 0.75
+        if len(dateData) >= 200:
+            evalDotSize, evalLineWidth, evalAlpha = 2, 0.7, 0.75
+        elif len(dateData) >= 100:
+            evalDotSize, evalLineWidth, evalAlpha = 5, 1, 0.75
+        else:
+            evalDotSize, evalLineWidth, evalAlpha = 15, 1, 0.75
+        depthDotSize, depthLineWidth, depthAlpha = evalDotSize, evalLineWidth, evalAlpha
         ax.scatter(
             dateData,
             evalsData,
