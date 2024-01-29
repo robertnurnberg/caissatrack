@@ -4,12 +4,11 @@ import matplotlib.dates as mdates
 from datetime import datetime
 from matplotlib.ticker import MaxNLocator
 
-NoP = 10**5  # global variable, changed by eval_indicator()
 evalIndicatorStr, depthIndicatorStr = "", ""
 
 
 def eval_indicator(d):
-    global evalIndicatorStr, NoP
+    global evalIndicatorStr
     evalIndicatorStr = (
         r"$\frac{1}{N} \sum_i\ \left(\min\{\frac{|e_i|}{100},2\} - 1\right)^2$"
     )
@@ -18,7 +17,7 @@ def eval_indicator(d):
         k = min(abs(k), 200)
         e += v * (k / 100 - 1) ** 2
         NoP += v
-    return e / NoP
+    return e / NoP, NoP
 
 
 def depth_indicator(d):
@@ -174,10 +173,14 @@ class caissadata:
 
     def create_timeseries_graph(self, plotStart=0, edgeMin=None, edgeMax=None):
         dateData = [datetime.fromisoformat(d) for d in self.date[plotStart:]]
-        evalsData, depthsData = [], []
+        evalsData, depthsData, NoP = [], [], 0
 
-        for d in self.evals[plotStart:]:
-            evalsData.append(eval_indicator(d))
+        for i, d in enumerate(self.evals[plotStart:]):
+            e, n = eval_indicator(d)
+            evalsData.append(e)
+            if i and n != NoP:
+                print(f"Warning: NoP changed from {NoP} to {n} at {dateData[i]}.")
+            NoP = n
         for d in self.depths[plotStart:]:
             depthsData.append(depth_indicator(d))
 
