@@ -108,9 +108,9 @@ class caissadata:
         fig, ax = plt.subplots()
         perBin = 2 if pv else 1 if cutOff <= 100 else 3  # values per bin
         for Idx in [-1, 0]:
-            listIdx = [key for key, val in dictList[Idx].items() for _ in range(val)]
             ax.hist(
-                listIdx,
+                dictList[Idx].keys(),
+                weights=dictList[Idx].values(),
                 range=(rangeMin, rangeMax),
                 bins=(rangeMax - rangeMin) // perBin,
                 alpha=0.5,
