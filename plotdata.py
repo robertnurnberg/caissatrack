@@ -2,6 +2,7 @@ import argparse, ast
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 from datetime import datetime
+from matplotlib.offsetbox import AnchoredOffsetbox, TextArea, HPacker, VPacker
 from matplotlib.ticker import MaxNLocator
 
 evalIndicatorStr, depthIndicatorStr = "", ""
@@ -28,6 +29,15 @@ def depth_indicator(d):
         if k > 0:
             s += v / k
     return s
+
+
+def depth_average(d):
+    c = s = 0
+    for k, v in d.items():
+        if k > 0:
+            s += v * k
+            c += v
+    return s / c
 
 
 def count_edgy_evals(d, lower, upper):
@@ -324,6 +334,82 @@ class caissadata:
 
         plt.savefig(self.prefix + "time.png", dpi=300)
 
+    def create_depth_graph(self, filename, plotStart=0):
+        dateData = [datetime.fromisoformat(d) for d in self.date[plotStart:]]
+        depthsAvg, depthsMin, depthsMax = [], [], []
+
+        for d in self.depths[plotStart:]:
+            depthsAvg.append(depth_average(d))
+            depthsMax.append(max(d.keys()))
+            depthsMin.append(min([k for k in d.keys() if k > 0]))
+
+        fig, ax = plt.subplots()
+        ax2 = ax.twinx()
+        dotSize, lineWidth, alpha = 2, 0.7, 0.75
+        ax.scatter(
+            dateData,
+            depthsAvg,
+            color="black",
+            s=dotSize,
+            alpha=alpha,
+        )
+        ax.scatter(
+            dateData,
+            depthsMax,
+            color="silver",
+            s=dotSize,
+            alpha=alpha,
+        )
+        ax2.scatter(
+            dateData,
+            depthsMin,
+            color="red",
+            s=dotSize,
+            alpha=alpha,
+        )
+        ax.plot(
+            dateData,
+            depthsAvg,
+            color="black",
+            linewidth=lineWidth,
+            alpha=alpha,
+        )
+        ax.tick_params(axis="y", labelcolor="black")
+        ax2.tick_params(axis="y", labelcolor="red")
+        ax2.ticklabel_format(axis="y", style="plain")
+        ax.xaxis.set_major_formatter(mdates.DateFormatter("%Y-%m-%d"))
+        plt.setp(
+            ax.get_xticklabels(),
+            rotation=45,
+            ha="right",
+            rotation_mode="anchor",
+            fontsize=6,
+        )
+        ax.grid(alpha=0.4, linewidth=0.5)
+        fig.suptitle(f" Non terminal PV lengths from {self.prefix}.csv over time.")
+        ybox1 = TextArea(
+            "average length",
+            textprops=dict(size=9, color="black", rotation=90, ha="left", va="bottom"),
+        )
+        ybox2 = TextArea(
+            "(and max length)",
+            textprops=dict(size=6, color="silver", rotation=90, ha="left", va="bottom"),
+        )
+        ybox = VPacker(children=[ybox2, ybox1], align="center", pad=0, sep=5)
+        anchored_ybox = AnchoredOffsetbox(
+            loc=8,
+            child=ybox,
+            pad=0.0,
+            frameon=False,
+            bbox_to_anchor=(-0.1, 0.3),
+            bbox_transform=ax.transAxes,
+            borderpad=0.0,
+        )
+        ax.add_artist(anchored_ybox)
+        ax2.set_ylabel("min length", color="red")
+
+        plt.savefig(filename, dpi=300)
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
@@ -370,6 +456,10 @@ if __name__ == "__main__":
         type=int,
         default=None,
     )
+    parser.add_argument(
+        "--PvLengthPlot",
+        help="Optional filename for time series plot of PV length statistics.",
+    )
     args = parser.parse_args()
 
     prefix, _, _ = args.filename.partition(".")
@@ -382,3 +472,5 @@ if __name__ == "__main__":
     if args.edgeMin is None or args.edgeMax is None:
         args.edgeMin = args.edgeMax = None
     data.create_timeseries_graph(edgeMin=args.edgeMin, edgeMax=args.edgeMax)
+    if args.PvLengthPlot:
+        data.create_depth_graph(args.PvLengthPlot)
