@@ -59,9 +59,10 @@ positions.
 ## Get involved
 
 If you want to help improve the coverage of these positions on cdb, you could
-manually or systematically explore them on [chessdb.cn](https://chessdb.cn/queryc_en/). As an example for the latter, you could clone this and 
-Joost VandeVondele's repo [cdbexplore](https://github.com/vondele/cdbexplore)
-via
+manually or systematically explore them on [chessdb.cn](
+https://chessdb.cn/queryc_en/). As an example for the latter, you could clone
+this and Joost VandeVondele's repo [cdbexplore](
+https://github.com/vondele/cdbexplore) via
 ```shell
 git clone https://github.com/robertnurnberg/caissatrack && git clone https://github.com/vondele/cdbexplore && pip install -r cdbexplore/requirements.txt
 ```
@@ -84,3 +85,12 @@ automatically via `.crontab` entries of the form
 ```
 where the second entry is really only needed for server-like machines that run
 24/7.
+
+---
+
+## Get in touch
+
+To discuss anything cdb related, and to help cdb grow at a healthy pace, join
+other (computer) chess enthusiasts at the [chessdbcn channel](
+https://discord.com/channels/435943710472011776/1101022188313772083) on the
+[Stockfish discord server](https://discord.gg/ZzJwPv3).
