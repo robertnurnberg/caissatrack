@@ -16,7 +16,7 @@ mv "$temp_file" caissa_sorted_100000_cdbpv.epd
 
 python caissatrack.py >>caissatrack.csv
 python extract_fens.py --shortest 1000 --ignore2folds >caissa_daily_shortest.epd
-python extract_fens.py --evalMin 70 --evalMax 110 >caissa_daily_edgy.epd
+python extract_fens.py --evalMin 80 --evalMax 110 >caissa_daily_edgy.epd
 
 git add caissa_sorted_100000_cdbpv.epd caissatrack.csv
 git add caissa_daily_shortest.epd caissa_daily_edgy.epd
