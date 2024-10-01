@@ -117,7 +117,7 @@ class caissadata:
             rangeMax = ma if rangeMax is None else max(ma, rangeMax)
         fig, ax = plt.subplots()
         perBin = 2 if pv else 1 if cutOff <= 100 else 3  # values per bin
-        for Idx in [-1, 0]:
+        for Idx in [0, -1]:
             ax.hist(
                 dictList[Idx].keys(),
                 weights=dictList[Idx].values(),
