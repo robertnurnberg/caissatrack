@@ -19,7 +19,7 @@ are written to [`caissatrack.csv`](caissatrack.csv).
 Moreover, each day the thousand positions with the currently shortest PVs on cdb
 (ignoring PVs ending in a two-fold repetition)
 are written to [`caissa_daily_shortest.epd`](caissa_daily_shortest.epd), and
-the positions with absolute evaluations in the interval [70, 110]
+the positions with absolute evaluations in the interval [80, 110]
 are written to [`caissa_daily_edgy.epd`](caissa_daily_edgy.epd).
 
 ---
