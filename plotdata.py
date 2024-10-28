@@ -430,6 +430,7 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--logplot",
+        "-l",
         action="count",
         default=0,
         help="Use logplot for the distribution plot. Once just eval plot, twice also PV depth plot.",
