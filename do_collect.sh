@@ -10,7 +10,7 @@ if [ -f "$temp_file" ]; then
     exit 0
 fi
 
-python ../cdblib/cdbbulkpv.py -c 8 --stable --user rob caissa_sorted_100000.epd >"$temp_file"
+python ../cdblib/cdbbulkpv.py -s -c 8 --stable --user rob caissa_sorted_100000.epd >"$temp_file"
 
 mv "$temp_file" caissa_sorted_100000_cdbpv.epd
 
