@@ -267,9 +267,9 @@ class caissadata:
             fontsize=6,
             family="monospace",
         )
-        # show start of stable PV usage
+        # do not show start of stable PV usage
         stableDate, stableColor = datetime.fromisoformat("2023-08-24"), "green"
-        if stableDate > dateData[0]:
+        if stableDate > dateData[0] and False:
             ax.axvline(x=stableDate, color=stableColor, linestyle="--", linewidth="1")
             yPos = min(evalsData) - 0.06 * (max(evalsData) - min(evalsData))
             ax.text(
