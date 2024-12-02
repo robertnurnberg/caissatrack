@@ -34,9 +34,9 @@ are written to [`caissa_daily_edgy.epd`](caissa_daily_edgy.epd).
 
 ## Progress
 
-The following graph attempts to measure the progress cdb makes in exploring
+The following graphs attempt to measure the progress cdb makes in exploring
 and evaluating the positions in `caissa_sorted_100000.epd`.\
-It plots the evolutions in time of the two (daily) indicators
+They plot the evolutions in time of the two (daily) indicators
 ```math
 E = \frac{1}{N} \sum_i \left(\min\{\frac{|e_i|}{100},2\} - 1\right)^2
 \qquad \text{and} \qquad
@@ -49,10 +49,13 @@ $E$ measures how certain cdb's evaluations are, while $D$ simply sums the
 inverses of the lengths of the non-resolved PVs. Note that as cdb (slowly) 
 approaches the 32men EGTB, $E$ should converge to 1, while $D$
 should converge to 0.\
-In addition the graph also shows the evolution of the total number of "on edge"
-positions.
+In addition the graphs also show the evolution of the total number of "on edge"
+positions. The first graph shows all available data points, while the second
+graph depicts only the 100 most recent data points.
 
 <p align="center"> <img src="caissatracktime.png?raw=true"> </p>
+
+<p align="center"> <img src="caissatracktime-100.png?raw=true"> </p>
 
 ---
 
