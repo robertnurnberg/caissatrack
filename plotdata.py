@@ -332,7 +332,9 @@ class caissadata:
             )
             ax3.tick_params(axis="y", colors=edgeColor)
 
-        plt.savefig(self.prefix + "time.png", dpi=300)
+        plt.savefig(
+            self.prefix + "time" + bool(plotStart) * str(plotStart) + ".png", dpi=300
+        )
 
     def create_depth_graph(self, filename, plotStart=0):
         dateData = [datetime.fromisoformat(d) for d in self.date[plotStart:]]
@@ -473,5 +475,8 @@ if __name__ == "__main__":
     if args.edgeMin is None or args.edgeMax is None:
         args.edgeMin = args.edgeMax = None
     data.create_timeseries_graph(edgeMin=args.edgeMin, edgeMax=args.edgeMax)
+    data.create_timeseries_graph(
+        plotStart=-100, edgeMin=args.edgeMin, edgeMax=args.edgeMax
+    )
     if args.PvLengthPlot:
         data.create_depth_graph(args.PvLengthPlot)
