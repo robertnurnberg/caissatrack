@@ -4,6 +4,7 @@ import matplotlib.dates as mdates
 from datetime import datetime
 from matplotlib.offsetbox import AnchoredOffsetbox, TextArea, HPacker, VPacker
 from matplotlib.ticker import MaxNLocator
+from matplotlib.ticker import FuncFormatter
 
 evalIndicatorStr, depthIndicatorStr = "", ""
 
@@ -23,12 +24,13 @@ def eval_indicator(d):
 
 def depth_indicator(d):
     global depthIndicatorStr
-    depthIndicatorStr = r"$\sum_i\ \frac{1}{d_i}$"
-    s = 0
+    depthIndicatorStr = r"$\frac{1}{N} \sum_i\ \frac{1}{d_i}$"
+    s = NoP = 0
     for k, v in d.items():
+        NoP += v
         if k > 0:
             s += v / k
-    return s
+    return s / NoP
 
 
 def depth_average(d):
@@ -46,6 +48,14 @@ def count_edgy_evals(d, lower, upper):
         if lower <= abs(k) <= upper:
             c += v
     return c
+
+
+def inverse_str(value, _):
+    if abs(value) < 1e-10:
+        return "0"
+    inv_str = f"{round(1/value, 1):.1f}"
+    inv_str = inv_str[:-2] if inv_str.endswith(".0") else inv_str
+    return f"({inv_str})$^{{-1}}$"
 
 
 class caissadata:
@@ -236,11 +246,13 @@ class caissadata:
         ax.tick_params(axis="y", labelcolor=evalColor)
         ax2.tick_params(axis="y", labelcolor=depthColor)
         ax2.ticklabel_format(axis="y", style="plain")
-        if max(depthsData) >= 10**6:
-            plt.setp(
-                ax2.get_yticklabels(),
-                fontsize=8,
-            )
+        ax2.yaxis.set_major_formatter(FuncFormatter(inverse_str))
+        for k in range(1, 3):
+            if min(depthsData) <= 10**(-k):
+                plt.setp(
+                    ax2.get_yticklabels(),
+                    fontsize=8 - k,
+                )
         ax.xaxis.set_major_formatter(mdates.DateFormatter("%Y-%m-%d"))
         plt.setp(
             ax.get_xticklabels(),
