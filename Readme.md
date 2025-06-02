@@ -40,13 +40,13 @@ They plot the evolutions in time of the two (daily) indicators
 ```math
 E = \frac{1}{N} \sum_i \left(\min\{\frac{|e_i|}{100},2\} - 1\right)^2
 \qquad \text{and} \qquad
-D=\sum_i \frac{1}{d_i},
+D = \frac{1}{N} \sum_i \frac{1}{d_i},
 ```
 where $(e_i, d_i)$ are the evaluation and depth values for the 100K positions,
 with the convention that $d_i = \infty$ if the position's PV ends in a terminal
 leaf (2-fold repetition, 50 moves rule, stalemate, checkmate or 7men EGTB).
-$E$ measures how certain cdb's evaluations are, while $D$ simply sums the
-inverses of the lengths of the non-resolved PVs. Note that as cdb (slowly) 
+$E$ measures how certain cdb's evaluations are, while $D^{-1}$ is an
+approximation of the positions' average depth on cdb. Note that as cdb (slowly)
 approaches the 32men EGTB, $E$ should converge to 1, while $D$
 should converge to 0.\
 In addition the graphs also show the evolution of the total number of "on edge"
