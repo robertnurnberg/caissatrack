@@ -5,8 +5,8 @@ Track the evaluations of the 100k most popular positions in
 [chessdb.cn](https://chessdb.cn/queryc_en/) (cdb). The positions can be
 found in [`caissa_sorted_100000.epd`](caissa_sorted_100000.epd), where they
 appear in sorted order according to popularity. For example, the starting
-position appears first. The average depth of these positions is 14.6 plies,
-with the deepest one 42 plies away from the starting position. The positions
+position appears first. The average depth of these positions on cdb is 14.4 plies,
+with the deepest one 41 plies away from the starting position. The positions
 have 30.3 pieces on average, and none has fewer than 18 pieces on the board.\
 Thanks to Joost VandeVondele for preparing `caissa_sorted_100000.epd` in July 
 2023.
