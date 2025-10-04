@@ -13,7 +13,7 @@ def abssort_str(d):
 def encode_depth(fen, pv, e):
     # use negative values to encode terminal PVs (with known result)
     d = len(pv)
-    board = chess.Board(fen)
+    board = chess.Board(fen, chess960=True)
     for move in pv:
         board.push_uci(move)
     if board.is_fifty_moves():

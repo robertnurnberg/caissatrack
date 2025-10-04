@@ -4,7 +4,7 @@ import argparse
 def pv_ends_in_twofold(fen, pv):
     import chess
 
-    board = chess.Board(fen)
+    board = chess.Board(fen, chess960=True)
     for move in pv:
         board.push_uci(move)
     return board.is_repetition(2)
