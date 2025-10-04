@@ -85,6 +85,7 @@ class caissadata:
         color, edgecolor, label = ["red", "blue"], ["yellow", "black"], [None, None]
         dictList = [None, None]  # list for the two dicts to plot
         rangeMin, rangeMax = None, None
+        used_cutOff = False
         for Idx in [0, -1]:
             dateStr, _, _ = self.date[Idx].partition("T")
             if pv:
@@ -112,16 +113,19 @@ class caissadata:
                 dictList[Idx] = self.evals[Idx].copy()
                 mi, ma = min(dictList[Idx].keys()), max(dictList[Idx].keys())
                 label[Idx] = f"{dateStr}   (in [{mi}, {ma}])"
-                for key in [-cutOff, cutOff]:
-                    if key not in dictList[Idx]:
-                        dictList[Idx][key] = 0
+                if mi < -cutOff and -cutOff not in dictList[Idx]:
+                    dictList[Idx][-cutOff] = 0
+                if ma > cutOff and cutOff not in dictList[Idx]:
+                    dictList[Idx][cutOff] = 0
                 for key, value in list(dictList[Idx].items()):
                     if key < -cutOff:
                         dictList[Idx][-cutOff] += value
                         del dictList[Idx][key]
+                        used_cutOff = True
                     elif key > cutOff:
                         dictList[Idx][cutOff] += value
                         del dictList[Idx][key]
+                        used_cutOff = True
             mi, ma = min(dictList[Idx].keys()), max(dictList[Idx].keys())
             rangeMin = mi if rangeMin is None else min(mi, rangeMin)
             rangeMax = ma if rangeMax is None else max(ma, rangeMax)
@@ -181,7 +185,7 @@ class caissadata:
                     fontsize=6,
                     family="monospace",
                 )
-        else:
+        elif used_cutOff:
             ax.set_title(
                 f"(Evals outside of [-{cutOff},{cutOff}] are included in the +/-{cutOff} buckets.)",
                 fontsize=6,
