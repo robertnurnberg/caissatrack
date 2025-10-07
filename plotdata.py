@@ -244,7 +244,7 @@ class caissadata:
             dateData,
             depthsData,
             color=depthColor,
-            linewidth=evalLineWidth,
+            linewidth=depthLineWidth,
             alpha=depthAlpha,
         )
         ax.tick_params(axis="y", labelcolor=evalColor)
