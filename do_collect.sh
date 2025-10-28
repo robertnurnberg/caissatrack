@@ -14,6 +14,8 @@ python ../cdblib/cdbbulkpv.py -s -c 8 --stable --user rob caissa_sorted_100000.e
 
 mv "$temp_file" caissa_sorted_100000_cdbpv.epd
 
+python ../cdblib/addons/plot_fens_cdb_dist.py caissa_sorted_100000_cdbpv.epd --density 0 -b 1 --debug >& plot.log
+
 python caissatrack.py >>caissatrack.csv
 python extract_fens.py --shortest 1000 --ignore2folds >caissa_daily_shortest.epd
 python extract_fens.py --evalMin 80 --evalMax 110 >caissa_daily_edgy.epd
