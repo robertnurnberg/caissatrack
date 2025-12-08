@@ -167,7 +167,7 @@ class caissadata:
                 terminalStr = "Terminal PV leafs: " + ", ".join(terminal)
                 ax.text(
                     0.05,
-                    0.02 - Idx * 0.02,
+                    0.02 + (1 + Idx) * 0.02,
                     terminalStr,
                     transform=fig.transFigure,
                     color=color[Idx],
