@@ -209,7 +209,6 @@ class caissadata:
             depthsData.append(depth_indicator(d))
 
         fig, ax = plt.subplots()
-        yColor, dateColor = "black", "black"
         evalColor, depthColor = "blue", "firebrick"
         ax2 = ax.twinx()
         if len(dateData) >= 200:
